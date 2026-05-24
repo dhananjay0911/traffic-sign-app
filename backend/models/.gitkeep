@@ -1,0 +1,3 @@
+# This folder stores the trained CNN model.
+# The .keras file is excluded from git (too large).
+# Run: python train.py  (from backend/ folder) to generate it.

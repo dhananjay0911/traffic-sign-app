@@ -1,0 +1,48 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+venv/
+env/
+.venv/
+ENV/
+
+# ── Trained model (large binary — regenerate with: python train.py) ───────────
+backend/models/*.keras
+backend/models/*.h5
+backend/models/*.pb
+backend/models/saved_model/
+
+# ── Dataset (300 MB+ — download separately, see README Step 2) ────────────────
+backend/data/
+
+# ── Node / Frontend build ─────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ── OS files ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*~
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+
+# ── Secrets ───────────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.production
