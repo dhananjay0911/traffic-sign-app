@@ -1,16 +1,16 @@
-# ── Core web server ──────────────────────────────────────────────────────────
+# ── Web server ────────────────────────────────────────────────────────────────
 fastapi==0.111.0
 uvicorn[standard]==0.29.0
 pydantic==2.7.1
 python-multipart==0.0.9
 
-# ── Image & data ─────────────────────────────────────────────────────────────
+# ── Image & data ──────────────────────────────────────────────────────────────
 Pillow==10.3.0
 numpy==1.26.4
 
-# ── TensorFlow (CPU-only, works on Windows Python 3.9-3.11) ─────────────────
-# DO NOT change these versions — they are tested together.
-# tensorflow 2.16+ uses keras 3 which has different import paths.
-tensorflow==2.15.1
+# ── TensorFlow — CPU only, Python 3.11 ───────────────────────────────────────
+tensorflow-cpu==2.15.1
 keras==2.15.0
+
+# ── Model download from Google Drive ─────────────────────────────────────────
 requests>=2.31.0
