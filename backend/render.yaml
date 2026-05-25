@@ -1,10 +1,16 @@
 services:
   - type: web
     name: traffic-sign-backend
-    runtime: python
+    env: python
+    pythonVersion: "3.11"
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
+    buildCommand: >
+      pip install --upgrade pip setuptools wheel &&
+      pip install -r requirements.txt &&
+      python download_model.py
     startCommand: python main.py
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.9
+        value: "3.11.9"
+      - key: GDRIVE_FILE_ID
+        value: "1ysN53DVU5PkKmZ6r4M6M7Rb7wEE5U_Rb"
