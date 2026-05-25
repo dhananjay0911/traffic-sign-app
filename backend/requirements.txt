@@ -13,3 +13,4 @@ numpy==1.26.4
 # tensorflow 2.16+ uses keras 3 which has different import paths.
 tensorflow==2.15.1
 keras==2.15.0
+requests>=2.31.0

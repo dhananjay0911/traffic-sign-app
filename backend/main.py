@@ -28,6 +28,15 @@ IMG_SIZE   = 32
 THRESHOLD  = 0.55   # minimum softmax confidence to report a detection
 
 # ── Load model at startup ────────────────────────────────────────────────────
+# ── Auto-download model on Render if not present ─────────────────────────────
+import os as _os
+if _os.environ.get("RENDER") and not Path("models/traffic_sign_cnn.keras").exists():
+    try:
+        from download_model import download
+        download()
+    except Exception as _e:
+        print(f"[WARN] Model auto-download failed: {_e}")
+
 model = None
 
 def load_model():
@@ -78,6 +87,7 @@ CLASSES = {
 # ── FastAPI app ──────────────────────────────────────────────────────────────
 app = FastAPI(title="Traffic Sign Classifier — CNN", version="1.0.0")
 
+# Allow all origins — includes Vercel preview URLs and local dev
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -188,5 +198,6 @@ async def model_info():
 # ── Entry point ──────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     multiprocessing.freeze_support()
-    import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=False)
+    import os, uvicorn
+    port = int(os.environ.get("PORT", 8000))   # Render injects PORT automatically
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
