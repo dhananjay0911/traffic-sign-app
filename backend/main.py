@@ -28,9 +28,9 @@ IMG_SIZE   = 32
 THRESHOLD  = 0.55   # minimum softmax confidence to report a detection
 
 # ── Load model at startup ────────────────────────────────────────────────────
-# ── Auto-download model on Render if not present ─────────────────────────────
+# ── Auto-download model if not present (runs on Render and locally) ──────────
 import os as _os
-if _os.environ.get("RENDER") and not Path("models/traffic_sign_cnn.keras").exists():
+if not Path("models/traffic_sign_cnn.keras").exists():
     try:
         from download_model import download
         download()
