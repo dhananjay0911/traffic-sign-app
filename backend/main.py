@@ -23,14 +23,14 @@ from pydantic import BaseModel
 from PIL import Image
 
 # ── Configuration ────────────────────────────────────────────────────────────
-MODEL_PATH = Path(__file__).parent / "models" / "traffic_sign_cnn.keras"
+MODEL_PATH = Path(__file__).parent / "models" / "traffic_sign_cnn.h5"
 IMG_SIZE   = 32
 THRESHOLD  = 0.55   # minimum softmax confidence to report a detection
 
 # ── Load model at startup ────────────────────────────────────────────────────
 # ── Auto-download model if not present (runs on Render and locally) ──────────
 import os as _os
-if not Path("models/traffic_sign_cnn.keras").exists():
+if not (Path(__file__).parent / "models" / "traffic_sign_cnn.h5").exists():
     try:
         from download_model import download
         download()
