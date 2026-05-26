@@ -48,13 +48,40 @@ def load_model():
         print("  Run:  python train.py   (one-time, ~20-40 min)")
         print("=" * 55 + "\n")
         return
+    import tensorflow as tf
+    tf.get_logger().setLevel("ERROR")
+
+    # Method 1: standard load
     try:
-        import tensorflow as tf
-        tf.get_logger().setLevel("ERROR")
         model = tf.keras.models.load_model(str(MODEL_PATH))
         print(f"[OK] Model loaded  input={model.input_shape}  params={model.count_params():,}")
-    except Exception as exc:
-        print(f"[ERROR] Could not load model: {exc}")
+        return
+    except Exception as e1:
+        print(f"[WARN] Standard load failed: {e1}")
+
+    # Method 2: compile=False (fixes Keras version mismatch)
+    try:
+        model = tf.keras.models.load_model(str(MODEL_PATH), compile=False)
+        model.compile(
+            optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+            loss="sparse_categorical_crossentropy",
+            metrics=["accuracy"],
+        )
+        print(f"[OK] Model loaded (compile=False)  input={model.input_shape}  params={model.count_params():,}")
+        return
+    except Exception as e2:
+        print(f"[WARN] compile=False failed: {e2}")
+
+    # Method 3: rebuild architecture + load weights only
+    try:
+        from model import build_cnn
+        rebuilt = build_cnn(num_classes=43, input_shape=(32, 32, 3))
+        rebuilt.load_weights(str(MODEL_PATH))
+        model = rebuilt
+        print(f"[OK] Model loaded via weights  input={model.input_shape}  params={model.count_params():,}")
+        return
+    except Exception as e3:
+        print(f"[ERROR] All load methods failed: {e3}")
 
 load_model()
 
