@@ -1,5 +1,5 @@
 """
-download_model.py — Downloads model using gdown (most reliable for Google Drive).
+download_model.py — Downloads model from Google Drive using gdown.
 """
 import os
 import sys
@@ -16,25 +16,36 @@ def download():
         print(f"[OK] Model already present ({MODEL_PATH.stat().st_size/1e6:.1f} MB)")
         return True
 
-    file_id = os.environ.get("GDRIVE_FILE_ID", "").strip()
-    if not file_id:
-        print("[ERROR] GDRIVE_FILE_ID not set in environment variables.")
+    # Accept either just the ID or a full URL — extract ID either way
+    raw = os.environ.get("GDRIVE_FILE_ID", "").strip()
+    if not raw:
+        print("[ERROR] GDRIVE_FILE_ID not set.")
         return False
 
-    print(f"[INFO] Downloading model via gdown (ID: {file_id}) ...")
+    # Extract pure file ID from full URL if user pasted the whole link
+    import re
+    match = re.search(r"/d/([a-zA-Z0-9_-]+)", raw)
+    file_id = match.group(1) if match else raw
+    print(f"[INFO] File ID: {file_id}")
+
     try:
         import gdown
         url = f"https://drive.google.com/uc?id={file_id}"
-        gdown.download(url, str(MODEL_PATH), quiet=False, fuzzy=True)
+        print(f"[INFO] Downloading via gdown ...")
+        # gdown 6.x removed 'fuzzy' — use output path directly
+        result = gdown.download(url, str(MODEL_PATH), quiet=False)
 
-        if MODEL_PATH.exists() and MODEL_PATH.stat().st_size > 1_000_000:
-            print(f"[OK] Downloaded {MODEL_PATH.stat().st_size/1e6:.1f} MB → {MODEL_PATH}")
+        if result and MODEL_PATH.exists() and MODEL_PATH.stat().st_size > 1_000_000:
+            print(f"[OK] Downloaded {MODEL_PATH.stat().st_size/1e6:.1f} MB")
             return True
         else:
-            print("[ERROR] Download failed — file too small or missing.")
+            print("[ERROR] File too small or download returned None.")
             return False
+
     except Exception as e:
         print(f"[ERROR] gdown failed: {e}")
+        if MODEL_PATH.exists():
+            MODEL_PATH.unlink()
         return False
 
 
