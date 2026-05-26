@@ -1,11 +1,33 @@
 services:
   - type: web
     name: traffic-sign-backend
-    runtime: python
+    env: python
+    pythonVersion: "3.11"
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
+    buildCommand: >
+      pip install --upgrade pip setuptools wheel &&
+      pip install -r requirements.txt &&
+      pip install requests &&
+      python -c "
+import requests, os
+from pathlib import Path
+url = 'https://huggingface.co/dhananjaybamhande/traffic-sign-cnn/resolve/main/traffic_sign_cnn.keras'
+out = Path('models/traffic_sign_cnn.keras')
+out.parent.mkdir(exist_ok=True)
+print(f'Downloading model from HuggingFace...')
+with requests.get(url, stream=True, timeout=300) as r:
+    r.raise_for_status()
+    total = int(r.headers.get('content-length', 0))
+    done = 0
+    with open(out, 'wb') as f:
+        for chunk in r.iter_content(chunk_size=1048576):
+            if chunk:
+                f.write(chunk)
+                done += len(chunk)
+                print(f'  {done/1e6:.1f} / {total/1e6:.1f} MB', flush=True)
+print(f'OK: {out.stat().st_size/1e6:.1f} MB saved')
+"
     startCommand: python main.py
-    plan: free
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: "3.11.9"
