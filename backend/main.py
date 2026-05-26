@@ -83,6 +83,16 @@ def load_model():
     except Exception as e3:
         print(f"[ERROR] All load methods failed: {e3}")
 
+    # Method 4: load h5 with legacy format
+    try:
+        import h5py
+        model = tf.keras.models.load_model(str(MODEL_PATH), compile=False,
+                                           options=tf.saved_model.LoadOptions())
+        print(f"[OK] Model loaded via legacy h5")
+        return
+    except Exception as e4:
+        print(f"[ERROR] Legacy h5 failed: {e4}")
+
 load_model()
 
 # ── GTSRB class labels (43 classes) ─────────────────────────────────────────
